@@ -11,3 +11,5 @@ The client for ngrok writing by libev
 存在问题：
 
 当时选用的内存池方案可能是一个败笔，现在内存管理并不好。未来会换成 jemalloc 或直接用 malloc
+
+配置文件请看：tunnel/default.json
