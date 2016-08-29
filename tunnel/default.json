@@ -1,0 +1,27 @@
+{
+	"server": "ngrok.me",
+	"port": 4443,
+	"user": "1zW3MqEwX4iHmbtSAk3t",
+	"auth": "",
+	"tunnels":
+	[
+	{
+		"proto": "http",
+		"subdomain": "nas",
+		"localhost": "192.168.7.92",
+		"localport": 5000
+	},
+	{
+		"proto": "https",
+		"subdomain": "r7000",
+		"localhost": "192.168.7.1",
+		"localport": 80
+	},
+	{
+		"proto": "tcp",
+		"subdomain": "",
+		"localhost": "192.168.7.1",
+		"localport": 22
+	}
+	]
+}
