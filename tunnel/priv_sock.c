@@ -1,5 +1,4 @@
 #include "tunnel_priv.h"
-#include "balloc.h"
 #include "utils.h"
 #include "list.h"
 #include "khash.h"
@@ -16,7 +15,7 @@ int priv_conn_release(EV_P_ priv_conn* priv_sock) {
 
     if(NULL != priv_sock->sslinfo) {
         openssl_free_info(priv_sock->sslinfo);
-        bfree(B_ARGS, priv_sock->sslinfo);
+        free(priv_sock->sslinfo);
         priv_sock->sslinfo = NULL;
     }
 
@@ -26,7 +25,7 @@ int priv_conn_release(EV_P_ priv_conn* priv_sock) {
 
     priv_sock->proxy->priv_sock = NULL;
     tunnel_error("priv release\n");
-    bfree(B_ARGS, priv_sock);
+    free(priv_sock);
     pmgr->priv_alloc--;
 
     return 0;
@@ -205,7 +204,7 @@ priv_conn* priv_conn_create(EV_P_ proxy_conn* proxy_sock, tunnel_info* ptunnel)
     //First log for alloc buf
     tunnel_log(TUNNEL_DEBUG, "priv alloc=%d\n", pmgr->priv_alloc);
 
-    priv_conn* priv_sock = (priv_conn*)balloc(B_ARGS, sizeof(priv_conn));
+    priv_conn* priv_sock = (priv_conn*)malloc(sizeof(priv_conn));
     pmgr->priv_alloc++;
 
     do {
@@ -258,7 +257,7 @@ priv_conn* priv_conn_create(EV_P_ proxy_conn* proxy_sock, tunnel_info* ptunnel)
         if(-1 != priv_sock->sock_fd) {
             close(priv_sock->sock_fd);
         }
-        bfree(B_ARGS, priv_sock);
+        free(priv_sock);
         pmgr->priv_alloc--;
     }
 

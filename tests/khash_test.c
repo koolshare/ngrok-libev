@@ -5,7 +5,6 @@
 #include <string.h>
 #include <signal.h>
 
-#include "balloc.h"
 #include "khash.h"
 
 KHASH_MAP_INIT_INT(32, char)

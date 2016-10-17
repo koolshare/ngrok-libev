@@ -27,8 +27,7 @@
  * ---------------------------------------------------------- */
 int create_socket(char[], BIO *);
 
-int main() {
-
+int main(void) {
   char           dest_url[] = "http://ngrok.me:4443";
   BIO              *certbio = NULL;
   BIO               *outbio = NULL;

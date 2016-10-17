@@ -2,7 +2,6 @@
 
 #include "coroutine.h"
 #include "list.h"
-#include "balloc.h"
 #include "khash.h"
 #include "common.h"
 

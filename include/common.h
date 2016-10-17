@@ -1,9 +1,9 @@
 #ifndef __COMMON_H_
 #define __COMMON_H_
 
-#define talloc(size) balloc(B_ARGS, size)
-#define tfree(p) bfreeSafe(B_ARGS, p)
-#define trealloc(p, size) brealloc(B_ARGS, p, size)
+#define talloc(size) malloc(size)
+#define tfree(p) free(p)
+#define trealloc(p, size) realloc(p, size)
 
 #define TUNNEL_BUF_SIZE 2048
 #define HOST_BUF_LEN 255

@@ -1,5 +1,4 @@
 #include "tunnel_priv.h"
-#include "balloc.h"
 #include "utils.h"
 #include "list.h"
 #include "khash.h"
@@ -267,7 +266,7 @@ static void proxy_conn_proc(EV_P_ ev_io *io, int revents) {
 
     if(conn_state_tls == proxy_sock->conn_state) {
         if(NULL == proxy_sock->sslinfo) {
-            proxy_sock->sslinfo = (openssl_info*)balloc(B_ARGS, sizeof(openssl_info));
+            proxy_sock->sslinfo = (openssl_info*)calloc(1, sizeof(openssl_info));
             if(NULL == proxy_sock->sslinfo) {
                 tunnel_log(TUNNEL_DEBUG, "proxy ssl alloc error\n");
                 return;
@@ -360,7 +359,7 @@ static int proxy_conn_release(EV_P_ proxy_conn* proxy_sock) {
 
     if(NULL != proxy_sock->sslinfo) {
         openssl_free_info(proxy_sock->sslinfo);
-        bfree(B_ARGS, proxy_sock->sslinfo);
+        free(proxy_sock->sslinfo);
         proxy_sock->sslinfo = NULL;
     }
 
@@ -369,7 +368,7 @@ static int proxy_conn_release(EV_P_ proxy_conn* proxy_sock) {
     }
 
     //free myself
-    bfree(B_ARGS, proxy_sock);
+    free(proxy_sock);
     pmgr->proxy_alloc--;
 
     tunnel_log(TUNNEL_DEBUG, "proxy release\n");
@@ -383,7 +382,7 @@ proxy_conn* proxy_conn_create(EV_P_ tunnel_mgr* pmgr)
     //First log for alloc buf
     tunnel_log(TUNNEL_DEBUG, "proxy alloc=%d\n", pmgr->proxy_alloc);
 
-    proxy_conn* proxy_sock = (proxy_conn*)balloc(B_ARGS, sizeof(proxy_conn));
+    proxy_conn* proxy_sock = (proxy_conn*)malloc(sizeof(proxy_conn));
     pmgr->proxy_alloc++;
 
     do {
@@ -425,7 +424,7 @@ proxy_conn* proxy_conn_create(EV_P_ tunnel_mgr* pmgr)
         if(-1 != proxy_sock->sock_fd) {
             close(proxy_sock->sock_fd);
         }
-        bfree(B_ARGS, proxy_sock);
+        free(proxy_sock);
     }
 
     return NULL;

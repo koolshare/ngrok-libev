@@ -1,5 +1,4 @@
 #include "tunnel_priv.h"
-#include "balloc.h"
 #include "utils.h"
 #include "list.h"
 #include "khash.h"
@@ -22,7 +21,7 @@ void main_conn_release(EV_P_ main_conn* main_sock) {
 
     if(NULL != main_sock->sslinfo) {
         openssl_free_info(main_sock->sslinfo);
-        bfree(B_ARGS, main_sock->sslinfo);
+        free(main_sock->sslinfo);
         main_sock->sslinfo = NULL;
     }
     if(-1 != main_sock->sock_fd) {
@@ -357,7 +356,7 @@ static void main_conn_proc(EV_P_ ev_io *io, int revents) {
     /* 把连接升级为tls连接，main_conn都使用tls进行连接 */
     if(conn_state_tls == main_sock->conn_state) {
         if(NULL == main_sock->sslinfo) {
-            main_sock->sslinfo = (openssl_info*)balloc(B_ARGS, sizeof(openssl_info));
+            main_sock->sslinfo = (openssl_info*)malloc(sizeof(openssl_info));
             if(NULL == main_sock->sslinfo) {
                 tunnel_log(TUNNEL_DEBUG, "sslinfo alloc error\n");
                 //TODO release main_sock

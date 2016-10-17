@@ -2,7 +2,6 @@
 
 #include "tunnel_priv.h"
 
-#include "balloc.h"
 #include "utils.h"
 #include "list.h"
 #include "khash.h"
@@ -150,7 +149,7 @@ static int read_config(tunnel_mgr* pmgr, char* config_path) {
     }
     for(i = 0; i < tunnel_len; i++) {
         subj = cJSON_GetArrayItem(jtunnel, i);
-        ptunnel = (tunnel_info*)balloc(B_ARGS, sizeof(tunnel_info));
+        ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
         memset(ptunnel, 0, sizeof(tunnel_info));
         GETCONFIG(subj, "proto", ptunnel->protocol, tmpj, tmpc, "proto error\n");
         strcpy(ptunnel->hostname, "");
@@ -185,7 +184,7 @@ static int tunnel_mgr_init(tunnel_mgr* pmgr)
     pmgr->clientId[0] = '\0';
     pmgr->auth_token[0] = '\0';
 
-    ptunnel = (tunnel_info*)balloc(B_ARGS, sizeof(tunnel_info));
+    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
     memset(ptunnel, 0, sizeof(tunnel_info));
     strcpy(ptunnel->protocol, "http");
     strcpy(ptunnel->hostname, "");
@@ -197,7 +196,7 @@ static int tunnel_mgr_init(tunnel_mgr* pmgr)
     //strcpy(ptunnel->keyMap, ptunnel->protocol);
     pmgr->tunnels[0] = ptunnel;
 
-    ptunnel = (tunnel_info*)balloc(B_ARGS, sizeof(tunnel_info));
+    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
     memset(ptunnel, 0, sizeof(tunnel_info));
     strcpy(ptunnel->protocol, "https");
     strcpy(ptunnel->hostname, "");
@@ -209,7 +208,7 @@ static int tunnel_mgr_init(tunnel_mgr* pmgr)
     //strcpy(ptunnel->keyMap, ptunnel->protocol);
     pmgr->tunnels[1] = ptunnel;
 
-    ptunnel = (tunnel_info*)balloc(B_ARGS, sizeof(tunnel_info));
+    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
     memset(ptunnel, 0, sizeof(tunnel_info));
     strcpy(ptunnel->protocol, "tcp");
     strcpy(ptunnel->hostname, "");
@@ -221,7 +220,7 @@ static int tunnel_mgr_init(tunnel_mgr* pmgr)
     //strcpy(ptunnel->keyMap, ptunnel->protocol);
     pmgr->tunnels[2] = ptunnel;
 
-    ptunnel = (tunnel_info*)balloc(B_ARGS, sizeof(tunnel_info));
+    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
     memset(ptunnel, 0, sizeof(tunnel_info));
     strcpy(ptunnel->protocol, "tcp");
     strcpy(ptunnel->hostname, "");
@@ -254,14 +253,6 @@ int server_init(EV_P_ tunnel_mgr* pmgr) {
     //初始化main_conn并连接服务器，接受服务器的各项配置信息
     main_sock_init(EV_A_ pmgr);
     return 0;
-}
-
-static void *json_balloc(size_t size) {
-    return balloc(B_ARGS, size);
-}
-
-static void json_bfree(void* p) {
-    bfreeSafe(B_ARGS, p);
 }
 
 static void mgr_release(EV_P_ tunnel_mgr* pmgr) {
@@ -303,19 +294,12 @@ int main(int argc, char **argv)
 {
     int n = 0, debug = 0, daemon = 0;
     char *config_path = NULL;
-    cJSON_Hooks hooks = {0};
     int syslog_options = LOG_PID | LOG_PERROR | LOG_DEBUG;
     tunnel_mgr* pmgr = &global_mgr;
     EV_P  = ev_default_loop(0);
 
     srand((unsigned) time(NULL));
     memset(pmgr, 0, sizeof(tunnel_mgr));
-
-    //使用balloc替换malloc balloc实现于一个webserver叫goahead，对频繁使用的固定大小的内存分配场合比较有用
-    //但会比malloc浪费内存就是了。
-    hooks.malloc_fn = &json_balloc;
-    hooks.free_fn = &json_bfree;
-    cJSON_InitHooks(&hooks);
 
     while (n >= 0) {
         n = getopt_long(argc, argv, "hdp:c:", options, NULL);
