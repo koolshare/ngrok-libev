@@ -149,8 +149,7 @@ static int read_config(tunnel_mgr* pmgr, char* config_path) {
     }
     for(i = 0; i < tunnel_len; i++) {
         subj = cJSON_GetArrayItem(jtunnel, i);
-        ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
-        memset(ptunnel, 0, sizeof(tunnel_info));
+        ptunnel = (tunnel_info*)calloc(1, sizeof(tunnel_info));
         GETCONFIG(subj, "proto", ptunnel->protocol, tmpj, tmpc, "proto error\n");
         strcpy(ptunnel->hostname, "");
         GETCONFIG(subj, "subdomain", ptunnel->subdomain, tmpj, tmpc, "subdomain error\n");
@@ -175,65 +174,6 @@ static int tunnel_mgr_init(tunnel_mgr* pmgr)
         tunnel_log(TUNNEL_DEBUG, "initial context error\n");
         return -1;
     }
-
-#if 0
-    pmgr->tunnel_cap = TUNNEL_CAP;
-    pmgr->server_port = 4443;
-    strcpy(pmgr->server_name, "v-find.com");
-    strcpy(pmgr->user, "1zW3MqEwX4iHmbtSAk3t");
-    pmgr->clientId[0] = '\0';
-    pmgr->auth_token[0] = '\0';
-
-    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
-    memset(ptunnel, 0, sizeof(tunnel_info));
-    strcpy(ptunnel->protocol, "http");
-    strcpy(ptunnel->hostname, "");
-    strcpy(ptunnel->subdomain, "test");
-    ptunnel->remote_port = 0;
-    strcpy(ptunnel->localhost, "192.168.7.1");
-    ptunnel->local_addr = name_resolve(ptunnel->localhost);
-    ptunnel->local_port = 80;
-    //strcpy(ptunnel->keyMap, ptunnel->protocol);
-    pmgr->tunnels[0] = ptunnel;
-
-    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
-    memset(ptunnel, 0, sizeof(tunnel_info));
-    strcpy(ptunnel->protocol, "https");
-    strcpy(ptunnel->hostname, "");
-    strcpy(ptunnel->subdomain, "test");
-    ptunnel->remote_port = 0;
-    strcpy(ptunnel->localhost, "192.168.7.1");
-    ptunnel->local_addr = name_resolve(ptunnel->localhost);
-    ptunnel->local_port = 80;
-    //strcpy(ptunnel->keyMap, ptunnel->protocol);
-    pmgr->tunnels[1] = ptunnel;
-
-    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
-    memset(ptunnel, 0, sizeof(tunnel_info));
-    strcpy(ptunnel->protocol, "tcp");
-    strcpy(ptunnel->hostname, "");
-    strcpy(ptunnel->subdomain, "test");
-    ptunnel->remote_port = 0;
-    strcpy(ptunnel->localhost, "192.168.7.1");
-    ptunnel->local_addr = name_resolve(ptunnel->localhost);
-    ptunnel->local_port = 23;
-    //strcpy(ptunnel->keyMap, ptunnel->protocol);
-    pmgr->tunnels[2] = ptunnel;
-
-    ptunnel = (tunnel_info*)malloc(sizeof(tunnel_info));
-    memset(ptunnel, 0, sizeof(tunnel_info));
-    strcpy(ptunnel->protocol, "tcp");
-    strcpy(ptunnel->hostname, "");
-    strcpy(ptunnel->subdomain, "test");
-    ptunnel->remote_port = 0;
-    strcpy(ptunnel->localhost, "192.168.1.1");
-    ptunnel->local_addr = name_resolve(ptunnel->localhost);
-    ptunnel->local_port = 23;
-    //strcpy(ptunnel->keyMap, ptunnel->protocol);
-    pmgr->tunnels[3] = ptunnel;
-
-    pmgr->tunnel_len = 4;
-#endif
 
     //Init 32
     pmgr->tunnelmap = kh_init(hi);

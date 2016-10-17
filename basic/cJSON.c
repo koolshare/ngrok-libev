@@ -154,7 +154,7 @@ static unsigned parse_hex4(const char *str)
 static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 static const char *parse_string(cJSON *item,const char *str)
 {
-	const char *ptr=str+1;char *ptr2;char *out;int len=0;unsigned uc,uc2;
+	const char *ptr=str+1;char *ptr2=NULL;char *out=NULL;int len=0;unsigned uc=0,uc2=0;
 	if (*str!='\"') {ep=str;return 0;}	/* not a string! */
 
 	while (*ptr!='\"' && *ptr && ++len) if (*ptr++ == '\\') ptr++;	/* Skip escaped quotes. */
@@ -405,7 +405,7 @@ static char *print_array(cJSON *item,int depth,int fmt)
 /* Build an object from the text. */
 static const char *parse_object(cJSON *item,const char *value)
 {
-	cJSON *child;
+	cJSON *child = NULL;
 	if (*value!='{')	{ep=value;return 0;}	/* not an object! */
 
 	item->type=cJSON_Object;

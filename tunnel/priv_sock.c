@@ -204,7 +204,7 @@ priv_conn* priv_conn_create(EV_P_ proxy_conn* proxy_sock, tunnel_info* ptunnel)
     //First log for alloc buf
     tunnel_log(TUNNEL_DEBUG, "priv alloc=%d\n", pmgr->priv_alloc);
 
-    priv_conn* priv_sock = (priv_conn*)malloc(sizeof(priv_conn));
+    priv_conn* priv_sock = (priv_conn*)calloc(1, sizeof(priv_conn));
     pmgr->priv_alloc++;
 
     do {
@@ -212,7 +212,6 @@ priv_conn* priv_conn_create(EV_P_ proxy_conn* proxy_sock, tunnel_info* ptunnel)
             tunnel_error("alloc priv sock error\n");
             break;
         }
-        memset(priv_sock, 0, sizeof(priv_conn));
         priv_sock->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         if(-1 == priv_sock->sock_fd) {
             tunnel_error("create priv sock error\n");

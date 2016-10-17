@@ -382,7 +382,7 @@ proxy_conn* proxy_conn_create(EV_P_ tunnel_mgr* pmgr)
     //First log for alloc buf
     tunnel_log(TUNNEL_DEBUG, "proxy alloc=%d\n", pmgr->proxy_alloc);
 
-    proxy_conn* proxy_sock = (proxy_conn*)malloc(sizeof(proxy_conn));
+    proxy_conn* proxy_sock = (proxy_conn*)calloc(1, sizeof(proxy_conn));
     pmgr->proxy_alloc++;
 
     do {
@@ -390,7 +390,6 @@ proxy_conn* proxy_conn_create(EV_P_ tunnel_mgr* pmgr)
             tunnel_log(TUNNEL_DEBUG, "alloc proxy sock error\n");
             break;
         }
-        memset(proxy_sock, 0, sizeof(proxy_conn));
 
         if(-1 == (proxy_sock->sock_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_IP))) {
             tunnel_log(TUNNEL_DEBUG, "create proxy sock error\n");
