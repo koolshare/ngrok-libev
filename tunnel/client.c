@@ -255,6 +255,7 @@ int server_init(EV_P_ tunnel_mgr* pmgr) {
     return 0;
 }
 
+extern void base64_cleanup(void);
 static void mgr_release(EV_P_ tunnel_mgr* pmgr) {
     //first release main_sock
     if(pmgr->main_created) {
@@ -270,6 +271,8 @@ static void mgr_release(EV_P_ tunnel_mgr* pmgr) {
     }
 
     buf_caches_release(pmgr);
+
+    base64_cleanup();
 }
 
 static struct option options[] = {
@@ -334,10 +337,10 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    //before daemonize, wait 5s for creator's pid for exit
-    sleep(5);
-
     if(daemon) {
+        //before daemonize, wait 5s for creator's pid for exit
+        sleep(5);
+
         //转入后台运行
         daemonize(pmgr->pid_path);
     }
@@ -362,6 +365,8 @@ int main(int argc, char **argv)
     mgr_release(EV_A_ pmgr);
     tunnel_error("exit\n");
 
+#if 0
+    //please use perp to monitor it
     //Restart myself support
     if(PROGRAM_EXIT_RESTART == pmgr->program_exit) {
         char* nargs[7];
@@ -378,6 +383,7 @@ int main(int argc, char **argv)
             tunnel_error("restart failed\n");
         }
     }
+#endif
 
     closelog();
     return 0;
